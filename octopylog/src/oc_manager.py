@@ -7,35 +7,42 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
-import network.message as message
+import network.oc_message as oc_message
+
+import threading 
 
 
 # create message
 
 
+oc_message.addMessageType("LOG.RAW")
+
+
 # message for logctrl 
-message.addMessageType("LOGCTRL.AUTOSCROLL")
-message.addMessageType("LOGCTRL.CLEAR")
-message.addMessageType("LOGCTRL.LOGITEM")
-message.addMessageType("LOGCTRL.WRITEFILE")
+oc_message.addMessageType("LOGCTRL.AUTOSCROLL")
+oc_message.addMessageType("LOGCTRL.CLEAR")
+oc_message.addMessageType("LOGCTRL.WRITEFILE")
 
 # connection
-message.addMessageType("CONNECTION.INFO")
-message.addMessageType("CONNECTION.CLOSE")
+oc_message.addMessageType("CONNECTION.INFO")
+oc_message.addMessageType("CONNECTION.CLOSE")
 
 # general application log
-message.addMessageType("APP.LOG")
-message.addMessageType("APP.CRITICALERROR")
+oc_message.addMessageType("APP.LOG")
+oc_message.addMessageType("APP.CRITICALERROR")
+oc_message.addMessageType("APP.DROPFIFO")
+
 
 
 class Manager:
     """ """
-    def __init__(self, fifo_in, gui_logctrl, gui_int):
+
+    def __init__(self, fifoIn, gui_logctrl, gui_int):
         
-        self._fifo_in           = fifo_in 
+        self.fifoIn             = fifoIn 
         self._wxLogCtrl_log     = gui_logctrl
         self._wxTextCtrl_Int    = gui_int
                
@@ -44,47 +51,64 @@ class Manager:
         
         # event => callback
         self._dispatch = {}
-        self._dispatch[ message.getId("LOGCTRL.AUTOSCROLL") ]   = self._logctrlAutoscroll
-        self._dispatch[ message.getId("LOGCTRL.CLEAR") ]        = self._logctrlClear
-        self._dispatch[ message.getId("LOGCTRL.LOGITEM") ]      = self._logctrlLogItem
-        self._dispatch[ message.getId("LOGCTRL.WRITEFILE") ]    = self._logctrlWriteFile
+        
+        
+        
+        self._dispatch[ oc_message.getId("LOG.RAW") ]              = self.logRaw
+        
+        self._dispatch[ oc_message.getId("LOGCTRL.AUTOSCROLL") ]   = self.logctrlAutoscroll
+        self._dispatch[ oc_message.getId("LOGCTRL.CLEAR") ]        = self.logctrlClear
+        self._dispatch[ oc_message.getId("LOGCTRL.WRITEFILE") ]    = self.logctrlWriteFile
 
-        self._dispatch[ message.getId("CONNECTION.INFO") ]      = self._connectionInfo
-        self._dispatch[ message.getId("CONNECTION.CLOSE") ]     = self._connectionClose
+        self._dispatch[ oc_message.getId("CONNECTION.INFO") ]      = self.connectionInfo
+        self._dispatch[ oc_message.getId("CONNECTION.CLOSE") ]     = self.connectionClose
 
-        self._dispatch[ message.getId("APP.LOG") ]              = self._appLog
-        self._dispatch[ message.getId("APP.CRITICALERROR") ]    = self._appCriticalError
+        self._dispatch[ oc_message.getId("APP.LOG") ]              = self.appLog
+        self._dispatch[ oc_message.getId("APP.CRITICALERROR") ]    = self.appCriticalError
+        
+        self._dispatch[ oc_message.getId("APP.DROPFIFO") ]         = self.appDropFifo
+        
      
      
+    def logRaw(self, param):
+        lst = []
+        lst.append(param["connectionID"].__str__())
+        lst.append(param["name"].__str__())
+        lst.append(param["msg"].__str__())
+        self._wxLogCtrl_log.addLogItem(lst)       
      
-    def _connectionInfo(self, param):
+     
+    def connectionInfo(self, param):
         # use Application log
-        self._appLog(param)
+        self.appLog(param)
+        
+    def connectionClose(self, param):
+        pass
         
     
-    def _appLog(self, param):
+    def appLog(self, param):
         """ Application log view """
-        self._wxTextCtrl_Int.AppendText(param.__str__())
+        self._wxTextCtrl_Int.AppendText("%s\n" % param.__str__())
      
-    def _appCriticalError(self, param):
-        self._appLog("Critical Error for application")
-        self._appLog("ToDo : add a debug trace system")
+    def appCriticalError(self, param):
+        self.appLog("Critical Error for application")
+        self.appLog("ToDo : add a debug trace system")
         
+    def appDropFifo(self, param):
+        self.appLog("FIFO full, one item was lost in : %s" % param)
         
-        
-    def _logctrlClear(self, param):
+    def logctrlClear(self, param):
+        self.appLog("Clear Log")
         #self._wxLogCtrl_log
         pass
     
-    def _logctrlLogItem(self, param):
-        lst = []
-        lst.append(param.connectionID.__str__())
-        lst.append(param.name.__str__())
-        lst.append(param.msg.__str__())
-        self._wxLogCtrl_log.addLogItem(lst)
-        
+
+    def logctrlAutoscroll(self, param):
+        self.appLog("Autoscroll=%s" % param)
+        self._wxLogCtrl_log.setAutoscroll(param)
+
     
-    def _logctrlWriteFile(self, param):
+    def logctrlWriteFile(self, param):
         #self.
         pass
         
@@ -96,7 +120,7 @@ class Manager:
 
     def stop(self):
         self._finished.set()
-        self._event.unblock()
+        self.fifoIn.unblock()
         self._th.join()
                 
     def start(self):
@@ -105,9 +129,11 @@ class Manager:
     
     def run(self):
         while not self._finished.isSet():
-            item = self._fifo_in.getitem(True, None)
+            item = self.fifoIn.getitem(True, None)
             if item is not None :
                 self._dispatch[item.type](item.obj)
+
+
 
 
 

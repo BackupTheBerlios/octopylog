@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 
@@ -101,9 +101,18 @@ class ConnectionManagerBase:
         callback.send(obj) 
  
     def closeAll(self):
+        # refuse all new connection
         self.setPermissionClientConnection(False)
-        
-        
+        # close socket of all current connection
+        self._sem.acquire()    
+        try :
+            for id in range(len(self._listhandle)) :
+                if self._listhandle[id] is not None : 
+                    self._listhandle[id].connection.close()
+        except : 
+            # connection can be closed by client
+            pass   
+        self._sem.release()        
         
         
         
@@ -230,7 +239,7 @@ class ObjSocketReceiver(SocketServer.ThreadingTCPServer):
 
     allow_reuse_address = 1
 
-    def __init__(self, host='localhost', port=4000):
+    def __init__(self, host, port):
         SocketServer.ThreadingTCPServer.__init__(self, (host, port), ObjStreamHandler)
 
         self.timeout = 1
@@ -238,19 +247,17 @@ class ObjSocketReceiver(SocketServer.ThreadingTCPServer):
         
         
     def stop(self):
-        
+    
         self._finished.set()
-        print "wait join"
-        self.th.join()       
-        print "win"      
+        self.th.join()          
         self.server_close()   
         
     def start(self):   
-        self.th = threading.Thread(target=self._serve_until_stopped, name="Server")
+        self.th = threading.Thread(target=self.serveUntilStopped, name="Server")
         self.th.start()        
         
         
-    def _serve_until_stopped(self):
+    def serveUntilStopped(self):
         import select
         while not self._finished.isSet():
             rd, wr, ex = select.select([self.socket.fileno()],
@@ -259,7 +266,6 @@ class ObjSocketReceiver(SocketServer.ThreadingTCPServer):
 
 
             if rd != [] :
-                print rd
                 self.handle_request()
 
 
@@ -267,13 +273,9 @@ class ObjSocketReceiver(SocketServer.ThreadingTCPServer):
 
 
 
-def start_server(manager, host="localhost", port=4000):
-    print "end loop"
+def createServer(manager, host, port):
     set_manager(manager)
-    tcpserver = ObjSocketReceiver(host,port)
-    tcpserver.start()
-    
-    
+    return ObjSocketReceiver(host,port)
     
 
  

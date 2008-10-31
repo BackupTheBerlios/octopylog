@@ -7,41 +7,68 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 
 import logging.handlers
 import threading
 
-import fifo   
-import server
-import message
+import network.oc_fifo  as oc_fifo   
+import network.oc_server as oc_server
+import network.oc_message as oc_message
 
 
 
-class ConnectionManager(server.ConnectionManagerBase):
+class ConnectionManager(oc_server.ConnectionManagerBase):
     
-    def __init__(self, maxconnection, fifo_log, fifo_event ):
-        server.ConnectionManagerBase.__init__(self, maxconnection)
-        self.fifo_log   = fifo_log
-        self.fifo_event = fifo_event
+    def __init__(self, maxconnection, fifoLog, fifoEvent ):
+        oc_server.ConnectionManagerBase.__init__(self, maxconnection)
+        self.fifoLog   = fifoLog
+        self.fifoEvent = fifoEvent
     
     
     def evtConnection(self, id):
-        message.postMessage(self.fifo_event,"CONNECTION.INFO", "Connection id:%04d"%id)
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection id:%04d"%id)
         
     def evtDisconnection(self, id):
-        message.postMessage(self.fifo_event,"CONNECTION.INFO", "Disconnection id:%04d"%id)
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Disconnection id:%04d"%id)
     
     def evtReject(self):
-        message.postMessage(self.fifo_event,"CONNECTION.INFO", "Connection rejected")
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection rejected")
             
         
     def evtReceived(self, id, obj):
         obj["connectionID"] = id
         try:
-            self._fifo_trace.putitem(obj)
+            #self.fifoLog.putitem(obj)
+            oc_message.postMessage(self.fifoLog,"LOG.RAW", obj)   
         except fifo.Overrun, ex:
-            pass
+            message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
+            
  
+ 
+ 
+class Logserver:
+    
+    def __init__(self, fifo_log, fifo_event, host, port, maxconnection): 
+        self.connnection = ConnectionManager(maxconnection, fifo_log, fifo_event)
+        self.server = oc_server.createServer(self.connnection, host, port)
+    
+    def start(self):
+        self.server.start()
+    
+    def stop(self):
+        self.connnection.closeAll()
+        self.server.stop()
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    

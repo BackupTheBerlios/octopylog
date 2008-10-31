@@ -7,11 +7,24 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 import wx
-import wxcustom.oc_wxLogCtrl as wxLogCtrl
+
+import network.oc_fifo as oc_fifo
+import network.oc_message as oc_message
+import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
+
+
+import oc_manager
+import oc_logserver
+
+
+import logging.handlers
+
+
+
 [ID_MENU_NEW,ID_MENU_OPEN,ID_MENU_SAVE,ID_MENU_PRINT,ID_MENU_QUIT,ID_MENU_CUT,\
 ID_MENU_COPY,ID_MENU_PASTE,ID_MENU_HELP,ID_MENU_About,ID_TOOL_START_CAPTURE,ID_TOOL_STOP,\
 ID_TOOL_AUTOSCROLL] = 6,7,8,9,10,11,12,13,15,16,10052,10053,10051
@@ -34,7 +47,9 @@ class frm_Main(wx.Frame):
 
 
     def VwXinit(self):
-        self.SetIcon(wx.Icon("images/arrow_in.png",wx.BITMAP_TYPE_PNG));
+        #self.SetIcon(wx.Icon("images/arrow_in.png",wx.BITMAP_TYPE_PNG));
+        self.SetIcon(wx.Icon("images/octopussy.png",wx.BITMAP_TYPE_PNG));
+        
         self.SetTitle('PyTrace')
         self.Show(False)
         self.MainFrameStBar = self.CreateStatusBar(1,wx.ST_SIZEGRIP)
@@ -89,6 +104,10 @@ class frm_Main(wx.Frame):
         self.Bind(wx.EVT_MENU,self.OnMenuCut,id=ID_MENU_CUT)
         self.Bind(wx.EVT_MENU,self.OnMenuCopy,id=ID_MENU_COPY)
         self.Bind(wx.EVT_MENU,self.OnMenuAbout,id=ID_MENU_About)
+        
+        
+        self.Bind(wx.EVT_CLOSE,self.Destroy)
+         
         self.wxToolBar_main = wx.ToolBar(self,-1,wx.Point(30,60),wx.Size(489,27))
 
         self.SetToolBar(self.wxToolBar_main)
@@ -108,7 +127,7 @@ class frm_Main(wx.Frame):
         self.pn136c = wx.Panel(self.wxSplitter_Log,-1,wx.Point(0,0),wx.Size(483,106))
         self.pn137c = wx.Panel(self.wxSplitter_Log,-1,wx.Point(0,109),wx.Size(477,97))
         self.txm140c = wx.TextCtrl(self.pn137c,-1,"",wx.Point(0,0),wx.Size(100,60),wx.TE_MULTILINE)
-        self.wxLogCtrl_LogCtrl = wxLogCtrl.LogCtrl(self.pn136c,-1,wx.Point(0,0),wx.Size(20,20))
+        self.wxLogCtrl = oc_wxLogCtrl.LogCtrl(self.pn136c,-1,wx.Point(0,0),wx.Size(20,20))
         self.wxToolBar_main.Realize()
         self.wxSplitter_Main.SplitHorizontally(self.pn130c,self.pn131c)
         self.wxSplitter_Main.SetMinimumPaneSize(3)
@@ -128,7 +147,7 @@ class frm_Main(wx.Frame):
         self.sz132s.Add(self.txm134c,1,wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.sz133s.Add(self.wxSplitter_Log,1,wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.sz138s.Add(self.txm140c,1,wx.EXPAND|wx.FIXED_MINSIZE,3)
-        self.sz139s.Add(self.wxLogCtrl_LogCtrl,1,wx.EXPAND|wx.FIXED_MINSIZE,3)
+        self.sz139s.Add(self.wxLogCtrl,1,wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.SetSizer(self.sz70s);self.SetAutoLayout(1);self.Layout();
         self.pn131c.SetSizer(self.sz132s);self.pn131c.SetAutoLayout(1);self.pn131c.Layout();
         self.pn130c.SetSizer(self.sz133s);self.pn130c.SetAutoLayout(1);self.pn130c.Layout();
@@ -138,6 +157,16 @@ class frm_Main(wx.Frame):
         return
     def VwXDelComp(self):
         return
+    
+    
+    def Destroy(self,event): #init function
+        #[ b9]Code event VwX...Don't modify[ b9]#
+        #add your code here
+        self.stopManager()
+        
+        event.Skip()
+        return #end function
+    
     def VwXEvOnSizingAll(self,event): #init function
         #add your code here
 
@@ -153,7 +182,7 @@ class frm_Main(wx.Frame):
     def Tool_AutoScroll(self,event): #init function
         #[65b]Code event VwX...Don't modify[65b]#
         #add your code here
-
+        oc_message.postMessage(self.fifoManager,"LOGCTRL.AUTOSCROLL", True)
         return #end function
 
     def Tool3c_VwXEvOnTool(self,event): #init function
@@ -207,6 +236,7 @@ class frm_Main(wx.Frame):
         #[653]Code menu VwX...Don't modify[653]#
         #add your code here
 
+        
         return #end function
 
     def OnMenuCut(self,event): #init function
@@ -234,13 +264,37 @@ class frm_Main(wx.Frame):
 
     def initAfter(self):
         #add your code here
-
+        self.initManager()
         return
 
     def Ddel(self): #init function
         #[64e]Code VwX...Don't modify[64e]#
         #add your code here
+        
 
+        
         return #end function
 
+
+    def postManager(self, typename, param):
+        oc_message.postMessage(self.fifoManager, typename, param)
+
+    
+    def stopManager(self):
+        self.ocLogserver.stop()
+        self.ocManager.stop()
+        
+            
+    def initManager(self):
+        # create fifo
+        self.fifoManager = oc_fifo.Fifo(32)
+        # Create Manager
+        self.ocManager = oc_manager.Manager(self.fifoManager, self.wxLogCtrl, self.txm140c )
+        self.ocManager.initView()
+        self.ocManager.start()
+        # Create logserver
+        self.ocLogserver = oc_logserver.Logserver( self.fifoManager, self.fifoManager,"localhost", logging.handlers.DEFAULT_TCP_LOGGING_PORT,5)
+        self.ocLogserver.start()
+        
+        
 

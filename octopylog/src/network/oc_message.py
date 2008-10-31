@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 
@@ -44,7 +44,7 @@ class Message:
 
 def postMessage(fifo, typename, param):
     """ post an event in a fifo """
-    fifo.putitem(Event(type,param))
+    fifo.putitem(Message(typename,param))
 
 def testMessageType(evt, typename):
     """ test the type of one event """
