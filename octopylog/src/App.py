@@ -7,28 +7,23 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 
 import wx
-provider = wx.SimpleHelpProvider()
-wx.HelpProvider_Set(provider)
+import oc_mainframe
 
-import frm_Main
-
-class App(wx.App):
+class MyApp(wx.App):
     def OnInit(self):
         wx.InitAllImageHandlers()
-        self.main = frm_Main.frm_Main(None,-1,'')
-        self.main.Show()
-        self.SetTopWindow(self.main)
+        frameMain = oc_mainframe.MainFrame(None, -1, "")
+        self.SetTopWindow(frameMain)
+        frameMain.Show()
         return 1
 
-def main():
-    application = App(0)
-    application.MainLoop()
-    print "end app"
+# end of class MyApp
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    App = MyApp(0)
+    App.MainLoop()

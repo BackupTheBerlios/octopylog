@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 
@@ -43,8 +43,8 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
         try:
             #self.fifoLog.putitem(obj)
             oc_message.postMessage(self.fifoLog,"LOG.RAW", obj)   
-        except fifo.Overrun, ex:
-            message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
+        except oc_fifo.Overrun, ex:
+            oc_message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
             
  
  
@@ -59,8 +59,9 @@ class Logserver:
         self.server.start()
     
     def stop(self):
-        self.connnection.closeAll()
         self.server.stop()
+        self.connnection.closeAll()
+        
         
         
     

@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 import network.oc_message as oc_message
@@ -132,6 +132,10 @@ class Manager:
             item = self.fifoIn.getitem(True, None)
             if item is not None :
                 self._dispatch[item.type](item.obj)
+            else:
+                return
+        pass
+
 
 
 
