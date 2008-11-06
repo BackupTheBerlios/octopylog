@@ -28,7 +28,8 @@ class oc_designGUI(wx.Frame):
         wxglade_tmp_menu.Append(wx.NewId(), "Quit", "", wx.ITEM_NORMAL)
         self.frameMain_menubar.Append(wxglade_tmp_menu, "File")
         wxglade_tmp_menu = wx.Menu()
-        self.frameMain_menubar.Append(wxglade_tmp_menu, "item")
+        wxglade_tmp_menu.Append(70, "About", "", wx.ITEM_NORMAL)
+        self.frameMain_menubar.Append(wxglade_tmp_menu, "Help")
         self.SetMenuBar(self.frameMain_menubar)
         # Menu Bar end
         self.statusbar = self.CreateStatusBar(1, 0)
@@ -38,8 +39,9 @@ class oc_designGUI(wx.Frame):
         self.SetToolBar(self.toolbar)
         self.toolbar.AddLabelTool(10050, "Start", wx.Bitmap("images/control_play_blue.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         self.toolbar.AddLabelTool(10051, "Stop", wx.Bitmap("images/control_stop_blue.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
+        self.toolbar.AddLabelTool(10052, "Clear", wx.Bitmap("images/application_delete.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL, "", "")
         self.toolbar.AddSeparator()
-        self.toolbar.AddLabelTool(10052, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "", "")
+        self.toolbar.AddLabelTool(10060, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "", "")
         # Tool Bar end
         self.logCtrl = oc_wxLogCtrl.LogCtrl(self.windowLogUp, -1)
         self.txtCtrlLogInfo = wx.TextCtrl(self.windowLogDown, -1, "", style=wx.NO_BORDER)
@@ -48,14 +50,18 @@ class oc_designGUI(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.EVT_TOOL, self.onAutoScroll, id=10052)
+        self.Bind(wx.EVT_MENU, self.onAbout, id=70)
+        self.Bind(wx.EVT_TOOL, self.onStartCapture, id=10050)
+        self.Bind(wx.EVT_TOOL, self.onStopCapture, id=10051)
+        self.Bind(wx.EVT_TOOL, self.onClearCapture, id=10052)
+        self.Bind(wx.EVT_TOOL, self.onAutoScroll, id=10060)
         # end wxGlade
 
     def __set_properties(self):
         # begin wxGlade: oc_designGUI.__set_properties
         self.SetTitle("OctopyLog")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap("C:\\CVS_Local\\octopylog\\src\\images\\octopussy.png", wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap("C:\\CVS_Local\\octopylog\\src\\images\\octopylog_icone.png", wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.statusbar.SetStatusWidths([-1])
         # statusbar fields
@@ -94,6 +100,22 @@ class oc_designGUI(wx.Frame):
         sizer_1.Fit(self)
         self.Layout()
         # end wxGlade
+
+    def onAbout(self, event): # wxGlade: oc_designGUI.<event_handler>
+        print "Event handler `onAbout' not implemented!"
+        event.Skip()
+
+    def onStartCapture(self, event): # wxGlade: oc_designGUI.<event_handler>
+        print "Event handler `onStartCapture' not implemented!"
+        event.Skip()
+
+    def onStopCapture(self, event): # wxGlade: oc_designGUI.<event_handler>
+        print "Event handler `onStopCapture' not implemented!"
+        event.Skip()
+
+    def onClearCapture(self, event): # wxGlade: oc_designGUI.<event_handler>
+        print "Event handler `onClearCapture' not implemented!"
+        event.Skip()
 
     def onAutoScroll(self, event): # wxGlade: oc_designGUI.<event_handler>
         print "Event handler `onAutoScroll' not implemented!"

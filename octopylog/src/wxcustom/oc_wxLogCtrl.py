@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 import wx
@@ -46,6 +46,9 @@ class wxColourManager:
         self.index += 1
         return ret
     
+    def findcolour(self, colourname):
+        return self.wxColourDatabase.Find(colourname) 
+    
     def getcolour(self, item):
         colourname = self.dic.get(item,None)
         if colourname is None :
@@ -62,8 +65,8 @@ class LogCtrl(wx.ListCtrl):
     
     
     def __init__(self, parent, id, pos = wx.DefaultPosition, size = wx.DefaultSize):
-        id = 1111
-        wx.ListCtrl.__init__(self, parent, id, pos, size, style = (wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES))
+
+        wx.ListCtrl.__init__(self, parent, wx.NewId(), pos, size, style = (wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES))
         
         self.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
         self.autoscroll = False
@@ -74,16 +77,79 @@ class LogCtrl(wx.ListCtrl):
         # Event binding
         #self.Bind(wx.EVT_SIZE, self.sizeMe, id=1111)
         #self.Bind(wx.EVT_MOTION, self.motion, id=1111)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
+        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
+        self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
         
+        
+        self.selectedItem = -1
+        
+    def OnItemSelected(self, event):
+        self.selectedItem = event.m_itemIndex
+        event.Skip()
+        
+    def OnItemDeselected(self, event):
+        self.selectedItem = -1
+        event.Skip()       
+  
+        
+        
+    def OnRightClick(self, event):
+        
+        # only do this part the first time so the events are only bound once
+        if not hasattr(self, "popupID1"):
+            self.popupID1 = wx.NewId()
+            self.popupID2 = wx.NewId()
+
+            self.Bind(wx.EVT_MENU, self.OnPopupOne, id=self.popupID1)
+            self.Bind(wx.EVT_MENU, self.OnPopupTwo, id=self.popupID2)
+
+        # make a menu
+        menu = wx.Menu()
+        # add some items
+        menu.Append(self.popupID1, "Mark")
+        menu.Append(self.popupID2, "UnMark")
+
+
+        # Popup the menu.  If an item is selected then its handler
+        # will be called before PopupMenu returns.
+        self.PopupMenu(menu)
+        menu.Destroy()
+    
+    
+    def OnPopupOne(self, event):
+        self.mark(self.selectedItem)
+        
+    def OnPopupTwo(self, event):
+        self.unMark(self.selectedItem)  
+    
+    
     def newnumber(self):
         c = self.number
         self.number += 1
         return c    
         
+
+    def mark(self, index):
+        
+        font =  self.GetFont()
+        font.SetWeight(wx.FONTWEIGHT_BOLD)
+        #colour = self.colourManager.findcolour("ORANGE")
+        #self.SetItemBackgroundColour(index,colour)
+        self.SetItemFont(index, font)
+    
+    
+    def unMark(self, index):
+        font =  self.GetFont()
+        font.SetWeight(wx.FONTWEIGHT_NORMAL)
+        #colour = self.colourManager.findcolour("ORANGE")
+        #self.SetItemBackgroundColour(index,colour)
+        self.SetItemFont(index, font)                
+
+
         
     def clear(self):
-        pass
-    
+        self.DeleteAllItems()
     
     def setAutoscroll(self, value):
         self.autoscroll = value
@@ -128,6 +194,7 @@ class LogCtrl(wx.ListCtrl):
          # log data
          for i in range(len(data)):
              self.SetStringItem(index,1+i,data[i],0)
+
 
          # autoscroll management
          if self.autoscroll is True :

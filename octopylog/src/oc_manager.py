@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 __author__ = "$Author: octopy $"
 
 import network.oc_message as oc_message
@@ -21,14 +21,20 @@ import threading
 oc_message.addMessageType("LOG.RAW")
 
 
-# message for logctrl 
 oc_message.addMessageType("LOGCTRL.AUTOSCROLL")
 oc_message.addMessageType("LOGCTRL.CLEAR")
 oc_message.addMessageType("LOGCTRL.WRITEFILE")
 
+
+
+
 # connection
 oc_message.addMessageType("CONNECTION.INFO")
 oc_message.addMessageType("CONNECTION.CLOSE")
+
+oc_message.addMessageType("CONNECTION.STARTCAPTURE")
+oc_message.addMessageType("CONNECTION.STOPCAPTURE")
+
 
 # general application log
 oc_message.addMessageType("APP.LOG")
@@ -46,7 +52,7 @@ class Manager:
         self._wxLogCtrl_log     = gui_logctrl
         self._wxTextCtrl_Int    = gui_int
                
-        
+     
         self._finished = threading.Event()
         
         # event => callback
@@ -62,13 +68,15 @@ class Manager:
 
         self._dispatch[ oc_message.getId("CONNECTION.INFO") ]      = self.connectionInfo
         self._dispatch[ oc_message.getId("CONNECTION.CLOSE") ]     = self.connectionClose
+        
 
         self._dispatch[ oc_message.getId("APP.LOG") ]              = self.appLog
         self._dispatch[ oc_message.getId("APP.CRITICALERROR") ]    = self.appCriticalError
         
         self._dispatch[ oc_message.getId("APP.DROPFIFO") ]         = self.appDropFifo
         
-     
+
+    
      
     def logRaw(self, param):
         lst = []
@@ -99,8 +107,7 @@ class Manager:
         
     def logctrlClear(self, param):
         self.appLog("Clear Log")
-        #self._wxLogCtrl_log
-        pass
+        self._wxLogCtrl_log.clear()
     
 
     def logctrlAutoscroll(self, param):

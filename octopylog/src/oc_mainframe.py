@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 __author__ = "$Author: octopy $"
 
 
@@ -21,6 +21,7 @@ import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
 import oc_manager
 import oc_logserver
 import oc_designGUI
+import oc_aboutdlg
 
 import logging.handlers
 
@@ -54,7 +55,22 @@ class MainFrame(oc_designGUI.oc_designGUI):
         self.postManager("LOGCTRL.AUTOSCROLL", val)
         event.Skip()
 
+    def onStartCapture(self, event): 
+        self.ocLogserver.startLog()
+        event.Skip()
 
+    def onStopCapture(self, event): 
+        self.ocLogserver.stopLog()
+        event.Skip()
+        
+    def onClearCapture(self, event): 
+        self.postManager("LOGCTRL.CLEAR", None)
+        event.Skip()
+
+    def onAbout(self, event): 
+        about = oc_aboutdlg.About(self, -1, "")
+        about.ShowModal()
+        event.Skip()
 
 
     def postManager(self, typename, param):

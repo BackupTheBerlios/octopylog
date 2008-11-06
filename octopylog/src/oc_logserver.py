@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 __author__ = "$Author: octopy $"
 
 
@@ -26,7 +26,17 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
         oc_server.ConnectionManagerBase.__init__(self, maxconnection)
         self.fifoLog   = fifoLog
         self.fifoEvent = fifoEvent
+        
+        self.ctrlEvtReveived = threading.Event()   
     
+    def enableEvtReveived(self):
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Enable Log event from connection(s)") 
+        self.ctrlEvtReveived.set()
+    
+    def disableEvtReceived(self):
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Disable Log event from connection(s)") 
+        self.ctrlEvtReveived.clear()
+
     
     def evtConnection(self, id):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection id:%04d"%id)
@@ -37,14 +47,14 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
     def evtReject(self):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection rejected")
             
-        
     def evtReceived(self, id, obj):
-        obj["connectionID"] = id
-        try:
-            #self.fifoLog.putitem(obj)
-            oc_message.postMessage(self.fifoLog,"LOG.RAW", obj)   
-        except oc_fifo.Overrun, ex:
-            oc_message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
+        if self.ctrlEvtReveived.isSet():
+            obj["connectionID"] = id
+            try:
+                #self.fifoLog.putitem(obj)
+                oc_message.postMessage(self.fifoLog,"LOG.RAW", obj)   
+            except oc_fifo.Overrun, ex:
+                oc_message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
             
  
  
@@ -62,6 +72,13 @@ class Logserver:
         self.server.stop()
         self.connnection.closeAll()
         
+        
+    def startLog(self):
+        """ """
+        self.connnection.enableEvtReveived()
+        
+    def stopLog(self):
+        self.connnection.disableEvtReceived()
         
         
     
