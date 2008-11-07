@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 
@@ -36,11 +36,20 @@ class MainFrame(oc_designGUI.oc_designGUI):
         
         self.Bind(wx.EVT_CLOSE,self.onDestroy)
         
+        
+        self.splitterMain.SetSashGravity(0.85) 
+        self.splitterLog.SetSashGravity(0.85)
+        self.SetSize(wx.Size(700, 600))
+        
+
+        self.statusbar.SetStatusText("", 0)        
+        
         # Event of App Init
         self.onInit()
         
         
     def onInit(self):
+    
         self.startManager()
         
   
@@ -48,6 +57,12 @@ class MainFrame(oc_designGUI.oc_designGUI):
     def onDestroy(self, event):
         self.stopManager()
         event.Skip()
+        
+        
+    def OnQuit(self, event): 
+        self.Close()
+        
+
 
 
     def onAutoScroll(self, event):

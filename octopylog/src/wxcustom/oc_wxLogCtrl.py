@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 import wx
@@ -75,8 +75,6 @@ class LogCtrl(wx.ListCtrl):
         self.number = 0 # assign at each log an incremental number
 
         # Event binding
-        #self.Bind(wx.EVT_SIZE, self.sizeMe, id=1111)
-        #self.Bind(wx.EVT_MOTION, self.motion, id=1111)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)

@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.4 $"
+__version__ = "$Revision: 1.5 $"
 __author__ = "$Author: octopy $"
 
 
@@ -39,10 +39,11 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
 
     
     def evtConnection(self, id):
-        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection id:%04d"%id)
+        t = self.getConnectionInfo(id)
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection id:%04d from %s" % (id,t))
         
     def evtDisconnection(self, id):
-        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Disconnection id:%04d"%id)
+        oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Disconnection id:%04d")
     
     def evtReject(self):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection rejected")

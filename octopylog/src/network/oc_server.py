@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 
@@ -72,7 +72,7 @@ class ConnectionManagerBase:
         
     def connection(self, handler):
         """ handler that request a connection
-            send_obj is the function that send an object an this conneciton
+            send_obj is the function that send an object an this connection
             return an id if connection is allowed """   
         if self.getPermissionClientConnection is False :
             return None
@@ -82,16 +82,16 @@ class ConnectionManagerBase:
         else           :   self.evtConnection(id)
         return id    
        
-    def getStatus(self):
+    def getConnectionInfo(self, id):
         """ Status of connection """
-        lst = []
         self._sem.acquire()
-        for id in range(len(self._id)) :
-            if self._listhandle[id] != None :
-                con = (id,"connected")
-                lst.append(con)
+        h = self._listhandle[id]
+        if h is not None:
+            ret = h.client_address
+        else:
+            ret = None
         self._sem.release()
-        return lst
+        return ret
  
     def send(self, id, obj):
         """ send an objet on the connection identify by the id number """      
