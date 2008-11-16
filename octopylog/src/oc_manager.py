@@ -7,13 +7,15 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.4 $"
+__version__ = "$Revision: 1.5 $"
 __author__ = "$Author: octopy $"
 
-import network.oc_message as oc_message
 
+
+import wx
 import threading 
 
+import network.oc_message as oc_message
 
 # create message
 
@@ -57,24 +59,21 @@ class Manager:
         
         # event => callback
         self._dispatch = {}
-        
-        
-        
         self._dispatch[ oc_message.getId("LOG.RAW") ]              = self.logRaw
-        
         self._dispatch[ oc_message.getId("LOGCTRL.AUTOSCROLL") ]   = self.logctrlAutoscroll
         self._dispatch[ oc_message.getId("LOGCTRL.CLEAR") ]        = self.logctrlClear
         self._dispatch[ oc_message.getId("LOGCTRL.WRITEFILE") ]    = self.logctrlWriteFile
-
         self._dispatch[ oc_message.getId("CONNECTION.INFO") ]      = self.connectionInfo
         self._dispatch[ oc_message.getId("CONNECTION.CLOSE") ]     = self.connectionClose
-        
-
         self._dispatch[ oc_message.getId("APP.LOG") ]              = self.appLog
         self._dispatch[ oc_message.getId("APP.CRITICALERROR") ]    = self.appCriticalError
-        
         self._dispatch[ oc_message.getId("APP.DROPFIFO") ]         = self.appDropFifo
         
+        # wx.log
+        self.wxLogTextCtrl = wx.LogTextCtrl(self._wxTextCtrl_Int)
+        self.wxLogTextCtrl.AddTraceMask("general")
+        wx.Log_SetActiveTarget(self.wxLogTextCtrl)
+        wx.Log_SetVerbose()
 
     
      
@@ -96,7 +95,7 @@ class Manager:
     
     def appLog(self, param):
         """ Application log view """
-        self._wxTextCtrl_Int.AppendText("%s\n" % param.__str__())
+        wx.LogMessage(param)
      
     def appCriticalError(self, param):
         self.appLog("Critical Error for application")
@@ -141,7 +140,7 @@ class Manager:
                 self._dispatch[item.type](item.obj)
             else:
                 return
-        pass
+        
 
 
 
