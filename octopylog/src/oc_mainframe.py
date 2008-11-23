@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 __author__ = "$Author: octopy $"
 
 
@@ -15,7 +15,7 @@ import wx
 
 import network.oc_fifo as oc_fifo
 import network.oc_message as oc_message
-import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
+
 
 
 import oc_manager
@@ -33,6 +33,11 @@ class MainFrame(oc_designGUI.oc_designGUI):
     def __init__(self, *args, **kwds):
         oc_designGUI.oc_designGUI.__init__(self, *args, **kwds)
         
+        
+        
+        self.fifoManager = None
+        self.ocManager = None
+        self.ocLogserver = None
         
         self.Bind(wx.EVT_CLOSE,self.onDestroy)
         
@@ -52,6 +57,9 @@ class MainFrame(oc_designGUI.oc_designGUI):
     
         self.startManager()
         
+        # activate trace by default
+        self.ocLogserver.startLog()
+        
   
         
     def onDestroy(self, event):
@@ -61,6 +69,7 @@ class MainFrame(oc_designGUI.oc_designGUI):
         
     def OnQuit(self, event): 
         self.Close()
+        event.Skip()
         
 
 
@@ -100,13 +109,13 @@ class MainFrame(oc_designGUI.oc_designGUI):
         self.ocManager.initView()
         self.ocManager.start()
         # Create logserver
-        self.ocLogserver = oc_logserver.Logserver( self.fifoManager, self.fifoManager,"localhost", logging.handlers.DEFAULT_TCP_LOGGING_PORT,5)
+        self.ocLogserver = oc_logserver.Logserver(self.fifoManager, self.fifoManager, \
+                                                  "localhost", logging.handlers.DEFAULT_TCP_LOGGING_PORT, 5)
         self.ocLogserver.start()             
     
     def stopManager(self):
         self.ocLogserver.stop()
         self.ocManager.stop()
-        pass
         
 
 

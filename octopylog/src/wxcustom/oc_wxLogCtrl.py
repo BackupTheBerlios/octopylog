@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 __author__ = "$Author: octopy $"
 
 import wx
@@ -16,7 +16,8 @@ import wx
 
 class wxColourManager:
     """" Manage colour : associate an object to a colour """
-    _listcolour = ["DARK TURQUOISE", 
+    _listcolour = ["RED",
+                   "DARK TURQUOISE", 
                    "YELLOW GREEN",
                    "MEDIUM ORCHID",
                    "MEDIUM AQUAMARINE", 
@@ -113,6 +114,7 @@ class LogCtrl(wx.ListCtrl):
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
+        event.skip()
     
     
     def OnPopupOne(self, event):
@@ -172,33 +174,31 @@ class LogCtrl(wx.ListCtrl):
 
     def addLogItem(self, data):
         
-
-         # create item (format)      
-         NewItem = wx.ListItem()
-         NewItem.SetMask(wx.LIST_MASK_TEXT)
-         NewItem.SetState(wx.LIST_STATE_FOCUSED)
-         NewItem.SetId(self.GetItemCount())
-         NewItem.SetColumn(0)
-         # ask to the colour manager for the backgroundcolour
-         colour = self.colourManager.getcolour((data[0],data[1]))
-         NewItem.SetBackgroundColour(colour)
+        # create item (format)      
+        newItem = wx.ListItem()
+        newItem.SetMask(wx.LIST_MASK_TEXT)
+        newItem.SetState(wx.LIST_STATE_FOCUSED)
+        newItem.SetId(self.GetItemCount())
+        newItem.SetColumn(0)
+        # ask to the colour manager for the backgroundcolour
+        colour = self.colourManager.getcolour((data[0],data[1]))
+        newItem.SetBackgroundColour(colour)
          # insert item in ctrlList
-         index = self.InsertItem(NewItem)
+        index = self.InsertItem(newItem)
          
-         # fill column
-         
-         # number
-         self.SetStringItem(index,0,"%6d" % self.newnumber(),0)
-         # log data
-         for i in range(len(data)):
-             self.SetStringItem(index,1+i,data[i],0)
+
+        # number
+        self.SetStringItem(index,0,"%6d" % self.newnumber(),0)
+        # log data
+        for i in range(len(data)):
+            self.SetStringItem(index, 1+i, data[i], 0)
 
 
-         # autoscroll management
-         if self.autoscroll is True :
-             self.EnsureVisible(index)
-         else :
-             pass
+        # autoscroll management
+        if self.autoscroll is True :
+            self.EnsureVisible(index)
+        else :
+            pass
         
 
 

@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 __author__ = "$Author: octopy $"
 
 
@@ -55,7 +55,8 @@ class Manager:
         self._wxTextCtrl_Int    = gui_int
                
      
-        self._finished = threading.Event()
+        self.finished = threading.Event()
+        self.thd = None
         
         # event => callback
         self._dispatch = {}
@@ -82,6 +83,7 @@ class Manager:
         lst.append(param["connectionID"].__str__())
         lst.append(param["name"].__str__())
         lst.append(param["msg"].__str__())
+        lst.append(param["funcName"].__str__())
         self._wxLogCtrl_log.addLogItem(lst)       
      
      
@@ -120,21 +122,21 @@ class Manager:
         
     def initView(self):
         # wxLogCtrl_log
-        lst = ["connectionID","name","msg"]
+        lst = ["connectionID","name","msg","function"]
         self._wxLogCtrl_log.setHeader(lst)
         
 
     def stop(self):
-        self._finished.set()
+        self.finished.set()
         self.fifoIn.unblock()
-        self._th.join()
+        self.thd.join()
                 
     def start(self):
-        self._th = threading.Thread(target=self.run,  name="AppControler")
-        self._th.start()
+        self.thd = threading.Thread(target=self.run,  name="AppControler")
+        self.thd.start()
     
     def run(self):
-        while not self._finished.isSet():
+        while not self.finished.isSet():
             item = self.fifoIn.getitem(True, None)
             if item is not None :
                 self._dispatch[item.type](item.obj)

@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.7 $"
 __author__ = "$Author: octopy $"
 
 
@@ -42,8 +42,24 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
         t = self.getConnectionInfo(id)
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection id:%04d from %s" % (id,t))
         
+        
+        obj = {}
+        obj["connectionID"] = ""
+        obj["name"] = "Octopylog"
+        obj["msg"] = "Connection id:%04d from %s" % (id,t)
+        obj["funcName"] = ""
+        oc_message.postMessage(self.fifoLog,"LOG.RAW", obj) 
+        
+        
     def evtDisconnection(self, id):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Disconnection id:%04d" % id)
+        
+        obj = {}
+        obj["connectionID"] = ""
+        obj["name"] = "Octopylog"
+        obj["msg"] = "Disconnection id:%04d" % id
+        obj["funcName"] = ""
+        oc_message.postMessage(self.fifoLog,"LOG.RAW", obj) 
     
     def evtReject(self):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Connection rejected")
@@ -54,7 +70,7 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
             try:
                 #self.fifoLog.putitem(obj)
                 oc_message.postMessage(self.fifoLog,"LOG.RAW", obj)   
-            except oc_fifo.Overrun, ex:
+            except oc_fifo.Overrun:
                 oc_message.postMessage(self.fifoEvent,"APP.DROPFIFO", "Fifo log")
             
  
