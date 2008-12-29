@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 
@@ -27,3 +27,5 @@ class MyApp(wx.App):
 if __name__ == "__main__":
     App = MyApp(0)
     App.MainLoop()
+
+

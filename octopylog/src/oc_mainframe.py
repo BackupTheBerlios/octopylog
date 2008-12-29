@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.4 $"
+__version__ = "$Revision: 1.5 $"
 __author__ = "$Author: octopy $"
 
 
@@ -105,13 +105,16 @@ class MainFrame(oc_designGUI.oc_designGUI):
         # create fifo
         self.fifoManager = oc_fifo.Fifo(128)
         # Create Manager
-        self.ocManager = oc_manager.Manager(self.fifoManager, self.logCtrl, self.txtctrlLogApp )
+        self.ocManager = oc_manager.Manager(self.fifoManager, self.logCtrl, self.txtctrlLogApp, self.desCtrl )
         self.ocManager.initView()
         self.ocManager.start()
         # Create logserver
         self.ocLogserver = oc_logserver.Logserver(self.fifoManager, self.fifoManager, \
                                                   "localhost", logging.handlers.DEFAULT_TCP_LOGGING_PORT, 5)
         self.ocLogserver.start()             
+    
+        self.logCtrl.fifoManager = self.fifoManager
+    
     
     def stopManager(self):
         self.ocLogserver.stop()

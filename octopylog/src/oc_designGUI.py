@@ -8,6 +8,7 @@ import wx
 
 # begin wxGlade: extracode
 import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
+import wxcustom.oc_wxDesCtrl as oc_wxDesCtrl
 # end wxGlade
 
 class oc_designGUI(wx.Frame):
@@ -45,7 +46,11 @@ class oc_designGUI(wx.Frame):
         self.toolbar.AddLabelTool(10060, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "Activate/Deactivate Autoscroll", "Activate/Deactivate Autoscroll")
         # Tool Bar end
         self.logCtrl = oc_wxLogCtrl.LogCtrl(self.windowLogUp, -1)
-        self.txtCtrlLogInfo = wx.TextCtrl(self.windowLogDown, -1, "", style=wx.NO_BORDER)
+        
+        
+        self.desCtrl = oc_wxDesCtrl.DesCtrl(self.windowLogDown, -1)
+        
+        
         self.txtctrlLogApp = wx.TextCtrl(self.windowMainDown, -1, "", style=wx.TE_MULTILINE|wx.NO_BORDER)
 
         self.__set_properties()
@@ -86,7 +91,7 @@ class oc_designGUI(wx.Frame):
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4.Add(self.logCtrl, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
         self.windowLogUp.SetSizer(sizer_4)
-        sizer_5.Add(self.txtCtrlLogInfo, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
+        sizer_5.Add(self.desCtrl, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
         self.windowLogDown.SetSizer(sizer_5)
         self.splitterLog.SplitHorizontally(self.windowLogUp, self.windowLogDown)
         sizer_3.Add(self.splitterLog, 1, wx.EXPAND, 0)

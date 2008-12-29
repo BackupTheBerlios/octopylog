@@ -7,12 +7,12 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.4 $"
+__version__ = "$Revision: 1.5 $"
 __author__ = "$Author: octopy $"
 
 import wx
 
-
+import network.oc_message as oc_message
 
 class wxColourManager:
     """" Manage colour : associate an object to a colour """
@@ -80,10 +80,24 @@ class LogCtrl(wx.ListCtrl):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
         
-        
         self.selectedItem = -1
         
+        
+        self.fifoManager = None
+        
+        
+        
     def OnItemSelected(self, event):
+        
+        data = []
+        #data.append("item selected :")
+        #data.append("%d" % event.m_itemIndex)
+        
+        for i in range(0, 5):
+            data.append(self.GetItem(event.m_itemIndex, i))
+            data.append(self.GetItemText(event.m_itemIndex))
+        self.toParseur(data)
+        
         self.selectedItem = event.m_itemIndex
         event.Skip()
         
@@ -91,6 +105,9 @@ class LogCtrl(wx.ListCtrl):
         self.selectedItem = -1
         event.Skip()       
   
+    def toParseur(self, data):
+        
+        oc_message.postMessage(self.fifoManager, "PARSEUR.ITEM", data)    
         
         
     def OnRightClick(self, event):

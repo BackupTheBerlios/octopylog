@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.7 $"
 __author__ = "$Author: octopy $"
 
 
@@ -43,17 +43,18 @@ oc_message.addMessageType("APP.LOG")
 oc_message.addMessageType("APP.CRITICALERROR")
 oc_message.addMessageType("APP.DROPFIFO")
 
+oc_message.addMessageType("PARSEUR.ITEM")
 
 
 class Manager:
     """ """
 
-    def __init__(self, fifoIn, gui_logctrl, gui_int):
+    def __init__(self, fifoIn, gui_logctrl, gui_int, gui_des):
         
         self.fifoIn             = fifoIn 
         self._wxLogCtrl_log     = gui_logctrl
         self._wxTextCtrl_Int    = gui_int
-               
+        self._wxDesCtrl_Des     = gui_des       
      
         self.finished = threading.Event()
         self.thd = None
@@ -70,12 +71,19 @@ class Manager:
         self._dispatch[ oc_message.getId("APP.CRITICALERROR") ]    = self.appCriticalError
         self._dispatch[ oc_message.getId("APP.DROPFIFO") ]         = self.appDropFifo
         
+        self._dispatch[ oc_message.getId("PARSEUR.ITEM") ]         = self.parseurItem
+        
+        
         # wx.log
         self.wxLogTextCtrl = wx.LogTextCtrl(self._wxTextCtrl_Int)
         self.wxLogTextCtrl.AddTraceMask("general")
         wx.Log_SetActiveTarget(self.wxLogTextCtrl)
         wx.Log_SetVerbose()
 
+    
+    def parseurItem(self, param):
+        self._wxDesCtrl_Des.parse_item(param)
+    
     
      
     def logRaw(self, param):
@@ -117,7 +125,6 @@ class Manager:
 
     
     def logctrlWriteFile(self, param):
-        #self.
         pass
         
     def initView(self):
