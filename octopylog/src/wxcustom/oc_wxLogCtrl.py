@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 __author__ = "$Author: octopy $"
 
 import wx
@@ -81,25 +81,25 @@ class LogCtrl(wx.ListCtrl):
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
         
         self.selectedItem = -1
-        
+        self.title = []
         
         self.fifoManager = None
         
+    def getColumnText(self, index, col):
+        item = self.GetItem(index, col)
+        return item.GetText()
+  
         
         
     def OnItemSelected(self, event):
         
-        data = []
-        #data.append("item selected :")
-        #data.append("%d" % event.m_itemIndex)
-        
-        for i in range(0, 5):
-            data.append(self.GetItem(event.m_itemIndex, i))
-            data.append(self.GetItemText(event.m_itemIndex))
+        data = {}
+        for i in range(len(self.title)):
+            data[self.title[i]] = self.getColumnText(event.m_itemIndex, i)
         self.toParseur(data)
         
-        self.selectedItem = event.m_itemIndex
         event.Skip()
+    
         
     def OnItemDeselected(self, event):
         self.selectedItem = -1
@@ -178,14 +178,19 @@ class LogCtrl(wx.ListCtrl):
         self.DeleteAllItems()
         self.ClearAll()
         
+        
+        
         # number 
         self.InsertColumn(0, "Number", wx.LIST_FORMAT_LEFT, -1)
-        self.SetColumnWidth(0, 96)       
+        self.SetColumnWidth(0, 96)   
+        
+        self.title.append("Number")    
         
         # log data
         for i in range(len(item)):
             self.InsertColumn(1+i, item[i], wx.LIST_FORMAT_LEFT, -1)
             self.SetColumnWidth(1+i, 128*(i+1))
+            self.title.append(item[i])
             
     
 

@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.7 $"
+__version__ = "$Revision: 1.8 $"
 __author__ = "$Author: octopy $"
 
 
@@ -28,6 +28,7 @@ class ConnectionManager(oc_server.ConnectionManagerBase):
         self.fifoEvent = fifoEvent
         
         self.ctrlEvtReveived = threading.Event()   
+    
     
     def enableEvtReveived(self):
         oc_message.postMessage(self.fifoEvent,"CONNECTION.INFO", "Enable Log event from connection(s)") 

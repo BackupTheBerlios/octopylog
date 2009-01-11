@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.7 $"
+__version__ = "$Revision: 1.8 $"
 __author__ = "$Author: octopy $"
 
 
@@ -134,6 +134,7 @@ class Manager:
         
 
     def stop(self):
+        print "try to stop oc_manager"
         self.finished.set()
         self.fifoIn.unblock()
         self.thd.join()
@@ -148,7 +149,8 @@ class Manager:
             if item is not None :
                 self._dispatch[item.type](item.obj)
             else:
-                return
+                break
+        print "exit run oc_manager"
         
 
 

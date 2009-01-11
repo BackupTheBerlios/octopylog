@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 __author__ = "$Author: octopy $"
 
 
@@ -117,8 +117,9 @@ class MainFrame(oc_designGUI.oc_designGUI):
     
     
     def stopManager(self):
-        self.ocLogserver.stop()
         self.ocManager.stop()
+        self.ocLogserver.stop()
+        
         
 
 
