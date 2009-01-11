@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.7 $"
 __author__ = "$Author: octopy $"
 
 import wx
@@ -233,6 +233,13 @@ class LogCtrl(wx.ListCtrl):
         event.Skip()    
     
 
+
+    def get_count_line(self):
+        pass
+    
+    
+    def get_line(self, line):
+        return ""
 
         
         

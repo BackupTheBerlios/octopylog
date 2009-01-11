@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 __author__ = "$Author: octopy $"
 
 
@@ -16,7 +16,7 @@ import wx
 
 
 aboutText = """
-Version : 0.1.0
+Version : 0.5 BETA1
 License : GPL
 """
 
