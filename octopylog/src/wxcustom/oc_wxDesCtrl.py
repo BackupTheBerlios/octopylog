@@ -25,12 +25,9 @@ class DesCtrl(wx.TextCtrl):
         
             for k, v in data.iteritems():
                 self.AppendText(self.format(k, v))
-            
-            
-            
+              
             try :
-                scope, dict = self.msg_extract(msg)
-                
+                scope, dict = self.msg_extract(msg)       
                 dis = "+ [msg] :: \"%s\"\n" % scope
                 for k,v in dict.iteritems():
                     dis += "    + [%s] :: %s\n" % (k,v.__str__())
@@ -39,13 +36,30 @@ class DesCtrl(wx.TextCtrl):
                 self.AppendText("+ [msg] ::\n")
                 self.AppendText("    + %s" % msg)       
             
-                
-                
+                     
         except (Exception), (error):
             self.Clear()
             self.AppendText("Error in parsing :\n")
             self.AppendText("%s" % error.__str__())
     
+    @staticmethod
+    def display_dict(dic, level=1):
+        import UserDict
+        import UserList
+        dis = ""
+        for k,v in dic.iteritems():
+            if      isinstance(v, UserDict.UserDict) :
+                dis += "%s+ [%s] ::\n" % ((" "*(level*4)),k)  
+                dis += DesCtrl.display_dict(v, level+1)
+            elif    isinstance(v, UserList.UserList):
+                dis += "%s+ [%s] ::\n" % ((" "*level),k)  
+                for item in v:
+                    #tmp = item.__str__()
+                    dis += DesCtrl.display_dict(item, level+1)
+                    #dis += "%s+ %s\n" % ((" "*(level*4*2)), tmp) 
+            else:
+                dis += "%s+ [%s] :: %s\n" % ((" "*level),k,v.__str__())    
+        return dis
    
    
     def format(self, item1, item2):        
@@ -62,6 +76,7 @@ class DesCtrl(wx.TextCtrl):
         print msg
         print msg[pos+1:-1]
         dict  = conv_dict(msg[pos+1:])
+                    
         return (scope, dict)
 
 
@@ -85,10 +100,9 @@ if __name__ == "__main__":
     data_exception = """py_exception : {'exception_info': "'module' object has no attribute 'trace_msg'", 'exception_class': 'AttributeError', 'stack': [{'function': 'boundValue', 'path': 'C:\\CVS_Local\\PyTestEmb\\test\\folder_01\\script_01.py', 'line': 17, 'code': '    test.trace_msg("No wait")'}], 'time': 0.61336231280791276}"""
      
     
-    scope, dict = DesCtrl.msg_extract(data_asser_ko)
+    scope, dict = DesCtrl.msg_extract(data_exception)
     
-    for k,v in dict.iteritems():
-        print "    + [%s] :: %s\n" % (k,v.__str__())
+    print DesCtrl.display_dict(dict)
  
  
     
