@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.7 $"
 __author__ = "$Author: octopy $"
 
 
@@ -16,6 +16,21 @@ import wx
 
 import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
 import wxcustom.oc_wxDesCtrl as oc_wxDesCtrl
+
+
+
+
+ID_MENU_SAVEAS = 10100
+ID_MENU_LOAD = 10101
+ID_MENU_QUIT = 10102
+ID_MENU_ABOUT = 10201
+
+ID_TOOLBAR_LOAD = 10061
+ID_TOOLBAR_SAVEAS = 10062
+ID_TOOLBAR_START = 10050
+ID_TOOLBAR_STOP = 10051
+ID_TOOLBAR_CLEAR = 10052
+ID_TOOLBAR_AUTOSCROLL = 10070
 
 
 
@@ -34,18 +49,18 @@ class oc_designGUI(wx.Frame):
         self.frameMain_menubar = wx.MenuBar()
         # File
         tmp_menu = wx.Menu()      
-        tmp_menu.Append(10100, "Save As ...", "", wx.ITEM_NORMAL)
-        tmp_menu.Append(10101, "Load", "", wx.ITEM_NORMAL)
-        tmp_menu.Append(10102, "Quit", "", wx.ITEM_NORMAL)
-        self.Bind(wx.EVT_MENU, self.OnSaveAs, id=10100)
-        self.Bind(wx.EVT_MENU, self.OnLoad, id=10101)
-        self.Bind(wx.EVT_MENU, self.OnQuit, id=10102)
+        tmp_menu.Append(ID_MENU_SAVEAS, "Save As ...", "", wx.ITEM_NORMAL)
+        tmp_menu.Append(ID_MENU_LOAD, "Load", "", wx.ITEM_NORMAL)
+        tmp_menu.Append(ID_MENU_QUIT, "Quit", "", wx.ITEM_NORMAL)
+        self.Bind(wx.EVT_MENU, self.OnSaveAs, id=ID_MENU_SAVEAS)
+        self.Bind(wx.EVT_MENU, self.OnLoad, id=ID_MENU_LOAD)
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=ID_MENU_QUIT)
         
         self.frameMain_menubar.Append(tmp_menu, "File")
         # About
         tmp_menu = wx.Menu()
-        tmp_menu.Append(10201, "About", "", wx.ITEM_NORMAL)
-        self.Bind(wx.EVT_MENU, self.onAbout, id=10201)
+        tmp_menu.Append(ID_MENU_ABOUT, "About", "", wx.ITEM_NORMAL)
+        self.Bind(wx.EVT_MENU, self.onAbout, id=ID_MENU_ABOUT)
         self.frameMain_menubar.Append(tmp_menu, "Help")
         self.SetMenuBar(self.frameMain_menubar)
         self.statusbar = self.CreateStatusBar(1, 0)
@@ -54,27 +69,27 @@ class oc_designGUI(wx.Frame):
         self.toolbar = wx.ToolBar(self, -1, style=wx.TB_HORIZONTAL|wx.TB_FLAT|wx.TB_DOCKABLE|wx.TB_NODIVIDER)
         self.SetToolBar(self.toolbar)
         self.toolbar.AddSeparator()
-        self.toolbar.AddLabelTool(10061, "Load",    wx.Bitmap("images/page_white_database.png",\
+        self.toolbar.AddLabelTool(ID_TOOLBAR_LOAD     , "Load",    wx.Bitmap("images/page_white_database.png",\
                                         wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL,\
                                         "Load", "Load a Capture")
-        self.toolbar.AddLabelTool(10062, "Save As..", wx.Bitmap("images/page_save.png",\
+        self.toolbar.AddLabelTool(ID_TOOLBAR_SAVEAS, "Save As..", wx.Bitmap("images/page_save.png",\
                                         wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL,\
                                          "Save As...", "Save As capture") 
         self.toolbar.AddSeparator()                
         
-        self.toolbar.AddLabelTool(10050, "Start",   wx.Bitmap("images/control_play_blue.png",\
+        self.toolbar.AddLabelTool(ID_TOOLBAR_START, "Start",   wx.Bitmap("images/control_play_blue.png",\
                                         wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL,\
                                         "Start Capture", "Start Capture")
-        self.toolbar.AddLabelTool(10051, "Stop",    wx.Bitmap("images/control_stop_blue.png",\
+        self.toolbar.AddLabelTool(ID_TOOLBAR_STOP, "Stop",    wx.Bitmap("images/control_stop_blue.png",\
                                         wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL,\
                                         "Stop Capture", "Stop Capture")
-        self.toolbar.AddLabelTool(10052, "Clear", wx.Bitmap("images/table_delete.png",\
+        self.toolbar.AddLabelTool(ID_TOOLBAR_CLEAR, "Clear", wx.Bitmap("images/table_delete.png",\
                                         wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_NORMAL,\
                                         "Clear Capture", "Clear Capture")
 
 
         self.toolbar.AddSeparator()
-        self.toolbar.AddLabelTool(10070, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "Activate/Deactivate Autoscroll", "Activate/Deactivate Autoscroll")
+        self.toolbar.AddLabelTool(ID_TOOLBAR_AUTOSCROLL, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "Activate/Deactivate Autoscroll", "Activate/Deactivate Autoscroll")
         
         
         self.logCtrl = oc_wxLogCtrl.LogCtrl(self.windowLogUp, -1)
@@ -87,10 +102,10 @@ class oc_designGUI(wx.Frame):
 
         
         
-        self.Bind(wx.EVT_TOOL, self.onStartCapture, id=10050)
-        self.Bind(wx.EVT_TOOL, self.onStopCapture, id=10051)
-        self.Bind(wx.EVT_TOOL, self.onClearCapture, id=10052)
-        self.Bind(wx.EVT_TOOL, self.onAutoScroll, id=10060)
+        self.Bind(wx.EVT_TOOL, self.onStartCapture, id=ID_TOOLBAR_START)
+        self.Bind(wx.EVT_TOOL, self.onStopCapture, id=ID_TOOLBAR_STOP)
+        self.Bind(wx.EVT_TOOL, self.onClearCapture, id=ID_TOOLBAR_CLEAR)
+        self.Bind(wx.EVT_TOOL, self.onAutoScroll, id=ID_TOOLBAR_AUTOSCROLL)
     
 
     def __set_properties(self):
