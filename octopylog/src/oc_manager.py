@@ -1,14 +1,14 @@
 # -*- coding: UTF-8 -*-
-###########################################################
-# Project  : Octopylog                                    #
-# License  : GNU General Public License (GPL)             #
-# Author   : JMB                                          #
-# Date     : 21/10/08                                     #
-###########################################################
 
+""" 
+OctopyLog Project : 
+"""
 
-__version__ = "$Revision: 1.8 $"
-__author__ = "$Author: octopy $"
+__author__      = "$Author: octopy $"
+__version__     = "$Revision: 1.9 $"
+__copyright__   = "Copyright 2009, The OctopyLog Project"
+__license__     = "GPL"
+__email__       = "octopy@gmail.com"
 
 
 
@@ -89,9 +89,9 @@ class Manager:
     def logRaw(self, param):
         lst = []
         lst.append(param["connectionID"].__str__())
-        lst.append(param["name"].__str__())
-        lst.append(param["msg"].__str__())
-        lst.append(param["funcName"].__str__())
+        lst.append(param["name"])
+        lst.append(param["msg"].encode("utf-8"))
+        lst.append(param["funcName"])
         self._wxLogCtrl_log.addLogItem(lst)       
      
      
@@ -117,6 +117,7 @@ class Manager:
     def logctrlClear(self, param):
         self.appLog("Clear Log")
         self._wxLogCtrl_log.clear()
+        self._wxDesCtrl_Des.clear_view()
     
 
     def logctrlAutoscroll(self, param):

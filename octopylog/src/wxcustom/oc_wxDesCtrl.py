@@ -1,3 +1,14 @@
+# -*- coding: UTF-8 -*-
+
+""" 
+OctopyLog Project : 
+"""
+
+__author__      = "$Author: octopy $"
+__version__     = "$Revision: 1.5 $"
+__copyright__   = "Copyright 2009, The OctopyLog Project"
+__license__     = "GPL"
+__email__       = "octopy@gmail.com"
 
 
 
@@ -9,13 +20,25 @@ import wx
 
 
 
+        
+        
+
+
+
+
 class DesCtrl(wx.TextCtrl):
     
 
     def __init__(self, parent, id):
         wx.TextCtrl.__init__(self, parent, wx.NewId(), "", style=wx.TE_MULTILINE|wx.NO_BORDER)
         self.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
-        
+    
+    
+    
+    def clear_view(self):
+        self.Clear()
+    
+    
     def parse_item(self, data):
         self.Clear()
         
@@ -33,11 +56,13 @@ class DesCtrl(wx.TextCtrl):
                     dis += "    + [%s] :: %s\n" % (k,v.__str__())
                 self.AppendText(dis)
             except :
+                
                 self.AppendText("+ [msg] ::\n")
                 self.AppendText("    + %s" % msg)       
-            
+                
                      
         except (Exception), (error):
+            
             self.Clear()
             self.AppendText("Error in parsing :\n")
             self.AppendText("%s" % error.__str__())
@@ -73,8 +98,6 @@ class DesCtrl(wx.TextCtrl):
         
         pos = msg.find(":")
         scope = msg[0:pos]
-        print msg
-        print msg[pos+1:-1]
         dict  = conv_dict(msg[pos+1:])
                     
         return (scope, dict)
@@ -84,10 +107,8 @@ class DesCtrl(wx.TextCtrl):
 def conv_dict(data):
     import UserDict
     try:
-        print data
         return UserDict.UserDict(eval(data))
     except Exception , error:
-        print data
         raise error  
         
 

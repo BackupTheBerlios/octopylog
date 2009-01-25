@@ -1,14 +1,15 @@
 # -*- coding: UTF-8 -*-
-###########################################################
-# Project  : Octopylog                                    #
-# License  : GNU General Public License (GPL)             #
-# Author   : JMB                                          #
-# Date     : 11/01/09                                     #
-###########################################################
 
+""" 
+OctopyLog Project : 
+"""
 
-__version__ = "$Revision: 1.7 $"
-__author__ = "$Author: octopy $"
+__author__      = "$Author: octopy $"
+__version__     = "$Revision: 1.8 $"
+__copyright__   = "Copyright 2009, The OctopyLog Project"
+__license__     = "GPL"
+__email__       = "octopy@gmail.com"
+
 
 
 
