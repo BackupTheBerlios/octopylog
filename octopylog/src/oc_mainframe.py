@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.7 $"
+__version__     = "$Revision: 1.8 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -22,9 +22,10 @@ import network.oc_message as oc_message
 import oc_manager
 import oc_logserver
 import oc_designGUI
-import oc_aboutdlg
 
 import logging.handlers
+
+
 
 
 
@@ -41,6 +42,7 @@ class MainFrame(oc_designGUI.oc_designGUI):
         self.ocLogserver = None
         
         self.Bind(wx.EVT_CLOSE,self.onDestroy)
+        #self.Bind(wx.EVT_IDLE, self.on_idle)
         
         
         self.splitterMain.SetSashGravity(0.85) 
@@ -73,7 +75,12 @@ class MainFrame(oc_designGUI.oc_designGUI):
         event.Skip()
         
 
-
+    def on_idle(self, event):
+        #self.ocManager.run_no_blocking()
+        event.Skip()
+        
+        
+        
 
     def onAutoScroll(self, event):
         val = self.toolbar.GetToolState(event.GetId())
@@ -93,8 +100,40 @@ class MainFrame(oc_designGUI.oc_designGUI):
         event.Skip()
 
     def onAbout(self, event): 
-        about = oc_aboutdlg.About(self, -1, "")
-        about.ShowModal()
+        
+
+
+        from app import APP_NAME
+        from app import APP_VERSION
+        from wx.lib.wordwrap import wordwrap
+        import platform
+
+        description = "Control Test is a script manager\n"
+        description += "\n WX-version : %s" % wx.VERSION_STRING
+        description += "\n WX-plateform : %s" % wx.Platform
+        description += "\n Python-version : %s" % platform.python_version()
+        description += "\n Plateform : %s" % platform.platform(terse=True)
+        description += "\n"
+        
+        info = wx.AboutDialogInfo()
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap("images/octopylog_logo.png", wx.BITMAP_TYPE_ANY))
+        
+        info.Icon = _icon 
+        info.Name = APP_NAME
+        info.Version = APP_VERSION
+        info.Copyright = "GNU GENERAL PUBLIC LICENSE v3"
+        info.Description = wordwrap(description, 350, wx.ClientDC(self))
+        info.WebSite = ("http://developer.berlios.de/projects/octopylog/", "berlios home page")
+        info.Developers = [ "Jean-Marc Beguinet" ]
+        
+        licenseText = "GNU GENERAL PUBLIC LICENSE v3\n"
+        licenseText += "Please report to :\n"
+        licenseText += "http://www.gnu.org/licenses/licenses.html"
+        info.License = wordwrap(licenseText, 500, wx.ClientDC(self))
+
+        wx.AboutBox(info)
+
         event.Skip()
 
 

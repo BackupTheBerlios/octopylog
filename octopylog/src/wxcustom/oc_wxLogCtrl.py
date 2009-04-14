@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.8 $"
+__version__     = "$Revision: 1.9 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -59,8 +59,32 @@ class wxColourManager:
             colourname = self.allocate(item)
         return self.wxColourDatabase.Find(colourname)
          
-        
-        
+
+
+
+
+
+
+EVT_CUSTOM_MSG_LOGCTRL_ID = wx.NewId()
+
+
+def EVT_CUSTOM_MSG_LOGCTRL(win, func):
+    win.Connect(-1, -1, EVT_CUSTOM_MSG_LOGCTRL_ID, func)
+
+
+
+class EventMsgLogCtrl(wx.PyEvent):
+    def __init__(self, msg):
+        wx.PyEvent.__init__(self) 
+        self.msg = msg
+        self.SetEventType(EVT_CUSTOM_MSG_LOGCTRL_ID)
+    def clone(self):
+        return EventMsgLogCtrl(self.msg)
+
+
+
+
+
 
 
 
@@ -83,10 +107,22 @@ class LogCtrl(wx.ListCtrl):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
         
+        
+        EVT_CUSTOM_MSG_LOGCTRL(self, self.on_new_msg)
+        
+        
         self.selectedItem = -1
         self.title = []
         
         self.fifoManager = None
+        
+        
+    def on_new_msg(self, event):
+        msg = event.msg
+        self.addLogItem(msg)
+        #event.Skip()  
+                
+    
         
     def getColumnText(self, index, col):
         item = self.GetItem(index, col)

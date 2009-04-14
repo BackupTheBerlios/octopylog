@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.9 $"
+__version__     = "$Revision: 1.10 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -16,7 +16,7 @@ import wx
 import threading 
 
 import network.oc_message as oc_message
-
+import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
 # create message
 
 
@@ -82,18 +82,26 @@ class Manager:
 
     
     def parseurItem(self, param):
-        self._wxDesCtrl_Des.parse_item(param)
+        pass
+        #self._wxDesCtrl_Des.parse_item(param)
     
     
      
     def logRaw(self, param):
-        lst = []
-        lst.append(param["connectionID"].__str__())
-        lst.append(param["name"])
-        lst.append(param["msg"].encode("utf-8"))
-        lst.append(param["funcName"])
-        self._wxLogCtrl_log.addLogItem(lst)       
-     
+        
+        
+        try :
+            lst = []
+            lst.append(param["connectionID"].__str__())
+            lst.append(param["name"])
+            lst.append(param["msg"].encode("utf-8"))
+            lst.append(param["funcName"])
+            evt = oc_wxLogCtrl.EventMsgLogCtrl(lst)
+            self._wxLogCtrl_log.AddPendingEvent(evt)            
+            
+        except Exception, ex:
+            print "Drop one raw : %s" % ex.__str__()
+
      
     def connectionInfo(self, param):
         # use Application log
@@ -152,6 +160,17 @@ class Manager:
             else:
                 break
         print "exit run oc_manager"
+    
+    def run_no_blocking(self):
+        for i in range(10):
+            item = self.fifoIn.getitem(False, 0)
+            if item is not None :
+                self._dispatch[item.type](item.obj)
+            else :
+                break
+        
+        
+        
         
 
 

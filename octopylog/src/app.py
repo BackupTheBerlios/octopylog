@@ -5,10 +5,14 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.4 $"
+__version__     = "$Revision: 1.1 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
+
+
+APP_NAME    = "Octopylog"
+APP_VERSION = "0.6.0"
 
 
 
