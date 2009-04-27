@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.10 $"
+__version__     = "$Revision: 1.11 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -17,23 +17,17 @@ import threading
 
 import network.oc_message as oc_message
 import wxcustom.oc_wxLogCtrl as oc_wxLogCtrl
+
+
 # create message
-
-
 oc_message.addMessageType("LOG.RAW")
-
-
 oc_message.addMessageType("LOGCTRL.AUTOSCROLL")
 oc_message.addMessageType("LOGCTRL.CLEAR")
 oc_message.addMessageType("LOGCTRL.WRITEFILE")
 
-
-
-
 # connection
 oc_message.addMessageType("CONNECTION.INFO")
 oc_message.addMessageType("CONNECTION.CLOSE")
-
 oc_message.addMessageType("CONNECTION.STARTCAPTURE")
 oc_message.addMessageType("CONNECTION.STOPCAPTURE")
 
@@ -42,8 +36,11 @@ oc_message.addMessageType("CONNECTION.STOPCAPTURE")
 oc_message.addMessageType("APP.LOG")
 oc_message.addMessageType("APP.CRITICALERROR")
 oc_message.addMessageType("APP.DROPFIFO")
-
 oc_message.addMessageType("PARSEUR.ITEM")
+
+
+oc_message.addMessageType("EXPORT.TXT")
+
 
 
 class Manager:
@@ -72,6 +69,11 @@ class Manager:
         self._dispatch[ oc_message.getId("APP.DROPFIFO") ]         = self.appDropFifo
         
         self._dispatch[ oc_message.getId("PARSEUR.ITEM") ]         = self.parseurItem
+        
+        
+        self._dispatch[ oc_message.getId("EXPORT.TXT") ]         = self.export_txt
+        
+        
         
         
         # wx.log
@@ -109,6 +111,15 @@ class Manager:
         
     def connectionClose(self, param):
         pass
+    
+    
+    def export_txt(self, param):
+        self.appLog("Export txt on file : \"%s\"" % param)
+        
+        try :
+            self._wxLogCtrl_log.export_txt(param)
+        except :
+            raise
         
     
     def appLog(self, param):

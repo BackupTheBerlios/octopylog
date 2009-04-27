@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.8 $"
+__version__     = "$Revision: 1.9 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -21,17 +21,17 @@ import wxcustom.oc_wxDesCtrl as oc_wxDesCtrl
 
 
 
-ID_MENU_SAVEAS = 10100
-ID_MENU_LOAD = 10101
-ID_MENU_QUIT = 10102
-ID_MENU_ABOUT = 10201
+ID_MENU_SAVEAS = wx.NewId()
+ID_MENU_LOAD = wx.NewId()
+ID_MENU_QUIT = wx.NewId()
+ID_MENU_ABOUT = wx.NewId()
 
-ID_TOOLBAR_LOAD = 10061
-ID_TOOLBAR_SAVEAS = 10062
-ID_TOOLBAR_START = 10050
-ID_TOOLBAR_STOP = 10051
-ID_TOOLBAR_CLEAR = 10052
-ID_TOOLBAR_AUTOSCROLL = 10070
+ID_TOOLBAR_LOAD = wx.NewId()
+ID_TOOLBAR_SAVEAS = wx.NewId()
+ID_TOOLBAR_START = wx.NewId()
+ID_TOOLBAR_STOP = wx.NewId()
+ID_TOOLBAR_CLEAR = wx.NewId()
+ID_TOOLBAR_AUTOSCROLL = wx.NewId()
 
 
 
@@ -101,12 +101,15 @@ class oc_designGUI(wx.Frame):
         self.__do_layout()
 
 
+
+        self.Bind(wx.EVT_TOOL, self.OnLoad, id=ID_TOOLBAR_LOAD)
+        self.Bind(wx.EVT_TOOL, self.OnSaveAs,  id=ID_TOOLBAR_SAVEAS)
         
         
         self.Bind(wx.EVT_TOOL, self.onStartCapture, id=ID_TOOLBAR_START)
-        self.Bind(wx.EVT_TOOL, self.onStopCapture, id=ID_TOOLBAR_STOP)
+        self.Bind(wx.EVT_TOOL, self.onStopCapture,  id=ID_TOOLBAR_STOP)
         self.Bind(wx.EVT_TOOL, self.onClearCapture, id=ID_TOOLBAR_CLEAR)
-        self.Bind(wx.EVT_TOOL, self.onAutoScroll, id=ID_TOOLBAR_AUTOSCROLL)
+        self.Bind(wx.EVT_TOOL, self.onAutoScroll,   id=ID_TOOLBAR_AUTOSCROLL)
     
 
     def __set_properties(self):

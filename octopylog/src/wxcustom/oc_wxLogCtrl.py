@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.9 $"
+__version__     = "$Revision: 1.10 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -107,9 +107,8 @@ class LogCtrl(wx.ListCtrl):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick)
         self.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.OnItemDeselected)
         
-        
+
         EVT_CUSTOM_MSG_LOGCTRL(self, self.on_new_msg)
-        
         
         self.selectedItem = -1
         self.title = []
@@ -217,8 +216,6 @@ class LogCtrl(wx.ListCtrl):
         self.DeleteAllItems()
         self.ClearAll()
         
-        
-        
         # number 
         self.InsertColumn(0, "Number", wx.LIST_FORMAT_LEFT, -1)
         self.SetColumnWidth(0, 96)   
@@ -254,13 +251,52 @@ class LogCtrl(wx.ListCtrl):
         for i in range(len(data)):
             self.SetStringItem(index, 1+i, data[i], 0)
 
-
         # autoscroll management
         if self.autoscroll is True :
             self.EnsureVisible(index)
         else :
             pass
+    
+    def export_txt(self, filename):
         
+        
+        
+        try :
+            f = open(filename, "w")
+        except :
+            raise
+        
+        
+        
+        nb = self.GetItemCount()
+        
+        for index in range(nb):
+
+            d = []
+            
+            num = self.getColumnText(index, 0).strip()
+            con = self.getColumnText(index, 1).strip()
+            name = self.getColumnText(index, 2).strip()
+            msg = self.getColumnText(index, 3).strip()
+                
+                
+            line = "%s%s%s%s\n".encode("utf-8") % (num.ljust(8),\
+                                 con.ljust(4),\
+                                 name.ljust(32),\
+                                 msg.__str__())
+            
+            try:
+                f.write(line)
+            except :
+                raise
+            
+        try:
+            f.close()
+        except :
+            raise   
+        
+        
+
 
 
 

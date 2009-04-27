@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.8 $"
+__version__     = "$Revision: 1.9 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -99,10 +99,38 @@ class MainFrame(oc_designGUI.oc_designGUI):
         self.postManager("LOGCTRL.CLEAR", None)
         event.Skip()
 
-    def onAbout(self, event): 
+    def OnSaveAs(self, event): 
+
+       
+        import os
+
+
+        wildcard = "Txt file (*.txt)|*.txt|"     \
+           "All files (*.*)|*.*"
+
+        dlg = wx.FileDialog(
+            self, message="Choose a file",
+            #"defaultDir=os.getcwd(),
+            defaultDir="",
+            defaultFile="",
+            wildcard=wildcard,
+            style=wx.SAVE | wx.CHANGE_DIR
+            )
+
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+        else :
+            path = None
+        dlg.Destroy()
+
+
+        if path is not None :
+            self.postManager("EXPORT.TXT", path)
         
+        event.Skip()
 
 
+    def onAbout(self, event): 
         from app import APP_NAME
         from app import APP_VERSION
         from wx.lib.wordwrap import wordwrap
