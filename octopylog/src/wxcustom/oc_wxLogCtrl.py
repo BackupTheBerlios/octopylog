@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.10 $"
+__version__     = "$Revision: 1.11 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -219,7 +219,6 @@ class LogCtrl(wx.ListCtrl):
         # number 
         self.InsertColumn(0, "Number", wx.LIST_FORMAT_LEFT, -1)
         self.SetColumnWidth(0, 96)   
-        
         self.title.append("Number")    
         
         # log data
@@ -259,62 +258,181 @@ class LogCtrl(wx.ListCtrl):
     
     def export_txt(self, filename):
         
-        
-        
         try :
             f = open(filename, "w")
         except :
             raise
-        
-        
-        
+               
         nb = self.GetItemCount()
         
         for index in range(nb):
-
             d = []
-            
             num = self.getColumnText(index, 0).strip()
             con = self.getColumnText(index, 1).strip()
             name = self.getColumnText(index, 2).strip()
             msg = self.getColumnText(index, 3).strip()
-                
-                
             line = "%s%s%s%s\n".encode("utf-8") % (num.ljust(8),\
                                  con.ljust(4),\
                                  name.ljust(32),\
-                                 msg.__str__())
-            
+                                 msg.__str__())    
             try:
                 f.write(line)
             except :
                 raise
-            
         try:
             f.close()
         except :
             raise   
         
         
+#    def sizeMe( self, event ):
+#        event.Skip()
+#    def motion( self, event ):
+#        event.Skip()    
+#    def get_count_line(self):
+#        pass
+#    def get_line(self, line):
+#        return ""
 
 
 
 
-    def sizeMe( self, event ):
-        event.Skip()
+class LogCtrl2(wx.ListCtrl):
+    
+    
+    def __init__(self, parent, id, pos = wx.DefaultPosition, size = wx.DefaultSize):
+
+        wx.ListCtrl.__init__(self, parent, wx.NewId(), pos, size, style = (wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_HRULES))
+        
+        self.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+        self.autoscroll = False
+        self.colourManager =  wxColourManager()
+        
+        self.number = 0 # assign at each log an incremental number
+
+        # Event binding
         
         
-    def motion( self, event ):
-        event.Skip()    
+        self.data = []
+        
+        
+
+        EVT_CUSTOM_MSG_LOGCTRL(self, self.on_new_msg)
+        
+        self.selectedItem = -1
+        self.title = []
+        
+        self.fifoManager = None
+        
+        
+    def on_new_msg(self, event):
+        msg = event.msg
+        self.addLogItem(msg)
+        #event.Skip()  
+                
+    
+        
+    def getColumnText(self, index, col):
+        item = self.GetItem(index, col)
+        return item.GetText()
+  
+        
+            
+    
+    def newnumber(self):
+        c = self.number
+        self.number += 1
+        return c    
+        
+
     
 
 
-    def get_count_line(self):
-        pass
+        
+    def clear(self):
+        self.DeleteAllItems()
+    
+    def setAutoscroll(self, value):
+        self.autoscroll = value
+
+
+
+    def setHeader(self, item):
+        
+        self.DeleteAllItems()
+        self.ClearAll()
+        
+        # number 
+        self.InsertColumn(0, "Number", wx.LIST_FORMAT_LEFT, -1)
+        self.SetColumnWidth(0, 96)   
+        self.title.append("Number")    
+        
+        # log data
+        for i in range(len(item)):
+            self.InsertColumn(1+i, item[i], wx.LIST_FORMAT_LEFT, -1)
+            self.SetColumnWidth(1+i, 128*(i+1))
+            self.title.append(item[i])
+            
+    
+
+
     
     
-    def get_line(self, line):
-        return ""
+    def addLogItem(self, data):
+        
+        # create item (format)      
+        newItem = wx.ListItem()
+        newItem.SetMask(wx.LIST_MASK_TEXT)
+        newItem.SetState(wx.LIST_STATE_FOCUSED)
+        newItem.SetId(self.GetItemCount())
+        newItem.SetColumn(0)
+        # ask to the colour manager for the backgroundcolour
+        colour = self.colourManager.getcolour((data[0],data[1]))
+        newItem.SetBackgroundColour(colour)
+         # insert item in ctrlList
+        index = self.InsertItem(newItem)
+         
+
+        # number
+        self.SetStringItem(index,0,"%6d" % self.newnumber(),0)
+        # log data
+        for i in range(len(data)):
+            self.SetStringItem(index, 1+i, data[i], 0)
+
+        # autoscroll management
+        if self.autoscroll is True :
+            self.EnsureVisible(index)
+        else :
+            pass
+    
+    def export_txt(self, filename):
+        
+        try :
+            f = open(filename, "w")
+        except :
+            raise
+               
+        nb = self.GetItemCount()
+        
+        for index in range(nb):
+            d = []
+            num = self.getColumnText(index, 0).strip()
+            con = self.getColumnText(index, 1).strip()
+            name = self.getColumnText(index, 2).strip()
+            msg = self.getColumnText(index, 3).strip()
+            line = "%s%s%s%s\n".encode("utf-8") % (num.ljust(8),\
+                                 con.ljust(4),\
+                                 name.ljust(32),\
+                                 msg.__str__())    
+            try:
+                f.write(line)
+            except :
+                raise
+        try:
+            f.close()
+        except :
+            raise   
+
 
         
         
