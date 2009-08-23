@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.11 $"
+__version__     = "$Revision: 1.12 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -85,7 +85,7 @@ class Manager:
     
     def parseurItem(self, param):
         pass
-        #self._wxDesCtrl_Des.parse_item(param)
+        self._wxDesCtrl_Des.parse_item(param)
     
     
      
@@ -96,7 +96,7 @@ class Manager:
             lst = []
             lst.append(param["connectionID"].__str__())
             lst.append(param["name"])
-            lst.append(param["msg"].encode("utf-8"))
+            lst.append(param["msg"].decode("utf-8"))
             lst.append(param["funcName"])
             evt = oc_wxLogCtrl.EventMsgLogCtrl(lst)
             self._wxLogCtrl_log.AddPendingEvent(evt)            

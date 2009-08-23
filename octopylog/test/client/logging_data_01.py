@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.1 $"
 __author__ = "$Author: octopy $"
 
 
@@ -24,16 +24,40 @@ rootLogger.addHandler(socketHandler)
 
 
 
+# log different data type
 
-logger = logging.getLogger("client_01")
 
-logger.info("client_01 log info at each 1 seconde")
+logger = logging.getLogger("logging_data_01")
+logger.info("logging data for parsing")
 
-for t in range(100):
-    logger.debug("client_01 says > debug at %04ds" %t)
-    logger.info("client_01 says > info at %04ds" %t)
-    logger.warning("client_01 says > warning at %04ds" %t)
-    logger.error("client_01 says > error at %04ds" %t)
+
+
+
+
+lobj = [   1,
+        "string",
+        [0, 1, 2],
+        ["abc", "def"],
+        [0, "abc"],
+        {"1":1, "2":2},
+        {"abc":[0,1,2]},
+     ]
+
+
+llog = [logger.debug,
+       logger.info,
+       logger.warning,
+       logger.error,
+       ]
+
+
+for t in range(1):
+    
+    for lo in  lobj:
+        for ll in llog:
+            s = lo.__str__()
+            print s
+            ll("%s" % s)
     print "%d" % t
     time.sleep(1)
 

@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.9 $"
+__version__     = "$Revision: 1.10 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -136,7 +136,7 @@ class MainFrame(oc_designGUI.oc_designGUI):
         from wx.lib.wordwrap import wordwrap
         import platform
 
-        description = "Control Test is a script manager\n"
+        description = "Octopylog is a sink for trace coming from different source\n"
         description += "\n WX-version : %s" % wx.VERSION_STRING
         description += "\n WX-plateform : %s" % wx.Platform
         description += "\n Python-version : %s" % platform.python_version()

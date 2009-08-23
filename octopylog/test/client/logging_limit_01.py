@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.1 $"
 __author__ = "$Author: octopy $"
 
 
@@ -25,15 +25,49 @@ rootLogger.addHandler(socketHandler)
 
 
 
-logger = logging.getLogger("client_01")
+logger = logging.getLogger("logging_limit_01")
 
-logger.info("client_01 log info at each 1 seconde")
+logger.info("logging data for test limit")
 
-for t in range(100):
-    logger.debug("client_01 says > debug at %04ds" %t)
-    logger.info("client_01 says > info at %04ds" %t)
-    logger.warning("client_01 says > warning at %04ds" %t)
-    logger.error("client_01 says > error at %04ds" %t)
+
+
+
+
+def gen_str_hc(number, step=16):
+    l = list()
+    for i in range(number):
+        s = ""
+        for j in range(i+1):
+            t = "%d" % (step*j)
+            t = t.ljust(step, ".")
+            s += t
+        l.append(s)
+    return l, len(max(l))
+
+
+
+lobj, max = gen_str_hc(32, 1024)
+
+
+llog = [logger.debug,
+       logger.info,
+       logger.warning,
+       logger.error,
+       ]
+
+
+for t in range(1):
+    
+    for ll in llog:
+        
+        ll("Max : %d" % max)
+
+    
+    for lo in  lobj:
+        for ll in llog:
+            s = lo.__str__()
+            print s
+            ll("%s" % s)
     print "%d" % t
     time.sleep(1)
 

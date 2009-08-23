@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.11 $"
+__version__     = "$Revision: 1.12 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -136,12 +136,12 @@ class LogCtrl(wx.ListCtrl):
             data[self.title[i]] = self.getColumnText(event.m_itemIndex, i)
         self.toParseur(data)
         
-        event.Skip()
+        #event.Skip()
     
         
     def OnItemDeselected(self, event):
         self.selectedItem = -1
-        event.Skip()       
+        #event.Skip()       
   
     def toParseur(self, data):
         
@@ -169,7 +169,7 @@ class LogCtrl(wx.ListCtrl):
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
-        event.skip()
+        #event.Skip()
     
     
     def OnPopupOne(self, event):
