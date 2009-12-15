@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.6 $"
+__version__     = "$Revision: 1.7 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -20,24 +20,48 @@ import wx
 
 
 
+
+
+
+class Parser():
+    def __init__(self, name):
+        self.name = name
         
+    def get_name(self):
+        return self.name
         
+    def parse(self, data):
+        
+        return info
+    
+    
+    def error_parsing(self, data, exception):
+        info = "Error during parsing\n"
+        info += "Please report error at \"%s\", version %s (copy this text in email)\n" % (__email__, __version__)
+        info += "%s : %s\n\n" % (exception.__class__.__name__, exception)
+        info += "\n"
+        info += "%s"  % data
+        return info
 
 
 
 
 class DesCtrl(wx.TextCtrl):
     
-
     def __init__(self, parent, id):
         wx.TextCtrl.__init__(self, parent, wx.NewId(), "", style=wx.TE_MULTILINE|wx.NO_BORDER)
         self.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
     
-
+        self.parser = {}
     
-    def clear_view(self):
+    
+    def clear_view(self):   
         self.Clear()
-    
+
+
+    def add_parser(self, parser):
+        pass
+
     
     def parse_item(self, data):
         self.Clear()

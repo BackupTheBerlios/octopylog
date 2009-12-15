@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.12 $"
+__version__     = "$Revision: 1.13 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -85,7 +85,7 @@ class Manager:
     
     def parseurItem(self, param):
         pass
-        self._wxDesCtrl_Des.parse_item(param)
+        #self._wxDesCtrl_Des.parse_item(param)
     
     
      
@@ -136,7 +136,7 @@ class Manager:
     def logctrlClear(self, param):
         self.appLog("Clear Log")
         self._wxLogCtrl_log.clear()
-        self._wxDesCtrl_Des.clear_view()
+        #self._wxDesCtrl_Des.clear_view()
     
 
     def logctrlAutoscroll(self, param):
@@ -149,7 +149,8 @@ class Manager:
         
     def initView(self):
         # wxLogCtrl_log
-        lst = ["connectionID","name","msg","function"]
+        #lst = ["connectionID","name","msg","function"]
+        lst = ["connectionID","name","msg"]
         self._wxLogCtrl_log.setHeader(lst)
         
 

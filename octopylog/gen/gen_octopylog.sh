@@ -1,7 +1,7 @@
 
 
 echo "clean"
-rm -R -v ctp/ctp/*.*
+rm -R -v octopylog/*.*
 
 
 echo "create directory"
@@ -21,7 +21,7 @@ read version
 name_file="octopylog-$version.tar.gz" 
 echo "Create package : $name_file"
 
-tar -pczf octopylog/$name_file octopylog
+tar -pczf $name_file octopylog
 
 echo "end"
 

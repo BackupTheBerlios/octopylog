@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.10 $"
+__version__     = "$Revision: 1.11 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -45,8 +45,8 @@ class MainFrame(oc_designGUI.oc_designGUI):
         #self.Bind(wx.EVT_IDLE, self.on_idle)
         
         
-        self.splitterMain.SetSashGravity(0.85) 
-        self.splitterLog.SetSashGravity(0.85)
+        self.splitter.SetSashGravity(0.85) 
+        #self.splitterLog.SetSashGravity(0.85)
         self.SetSize(wx.Size(700, 600))
         
 

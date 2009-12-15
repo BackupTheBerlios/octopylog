@@ -5,7 +5,7 @@ OctopyLog Project :
 """
 
 __author__      = "$Author: octopy $"
-__version__     = "$Revision: 1.9 $"
+__version__     = "$Revision: 1.10 $"
 __copyright__   = "Copyright 2009, The OctopyLog Project"
 __license__     = "GPL"
 __email__       = "octopy@gmail.com"
@@ -39,12 +39,11 @@ class oc_designGUI(wx.Frame):
     def __init__(self, *args, **kwds):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.splitterMain = wx.SplitterWindow(self, -1, style=wx.SP_3DBORDER|wx.SP_BORDER)
-        self.windowMainDown = wx.Panel(self.splitterMain, -1, style=wx.NO_BORDER|wx.TAB_TRAVERSAL)
-        self.windowMainUp = wx.Panel(self.splitterMain, -1)
-        self.splitterLog = wx.SplitterWindow(self.windowMainUp, -1, style=wx.SP_3DBORDER|wx.SP_BORDER)
-        self.windowLogDown = wx.Panel(self.splitterLog, -1)
-        self.windowLogUp = wx.Panel(self.splitterLog, -1)
+
+
+        self.splitter = wx.SplitterWindow(self, -1, style=wx.SP_3DBORDER|wx.SP_BORDER)
+        self.windowDown = wx.Panel(self.splitter, -1, style=wx.NO_BORDER|wx.TAB_TRAVERSAL)
+        self.windowUp = wx.Panel(self.splitter, -1)        
         
         # Menu Bar
         self.frameMain_menubar = wx.MenuBar()
@@ -93,9 +92,9 @@ class oc_designGUI(wx.Frame):
         self.toolbar.AddLabelTool(ID_TOOLBAR_AUTOSCROLL, "AutoScroll", wx.Bitmap("images/arrow_down.png", wx.BITMAP_TYPE_ANY), wx.NullBitmap, wx.ITEM_CHECK, "Activate/Deactivate Autoscroll", "Activate/Deactivate Autoscroll")
         
         
-        self.logCtrl = oc_wxLogCtrl.LogCtrl(self.windowLogUp, -1)
-        self.desCtrl = oc_wxDesCtrl.DesCtrl(self.windowLogDown, -1)
-        self.txtctrlLogApp = wx.TextCtrl(self.windowMainDown, -1, "", style=wx.TE_MULTILINE|wx.NO_BORDER)
+        self.logCtrl = oc_wxLogCtrl.LogCtrl3(self.windowUp, -1)
+        self.desCtrl = None
+        self.txtctrlLogApp = wx.TextCtrl(self.windowDown, -1, "", style=wx.TE_MULTILINE|wx.NO_BORDER)
 
         self.__set_properties()
         self.__do_layout()
@@ -130,24 +129,24 @@ class oc_designGUI(wx.Frame):
         
         
     def __do_layout(self):
+
+
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_4 = wx.BoxSizer(wx.HORIZONTAL)
+        
         sizer_4.Add(self.logCtrl, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
-        self.windowLogUp.SetSizer(sizer_4)
-        sizer_5.Add(self.desCtrl, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
-        self.windowLogDown.SetSizer(sizer_5)
-        self.splitterLog.SplitHorizontally(self.windowLogUp, self.windowLogDown)
-        sizer_3.Add(self.splitterLog, 1, wx.EXPAND, 0)
-        self.windowMainUp.SetSizer(sizer_3)
+        self.windowUp.SetSizer(sizer_4)
+        
+
         sizer_2.Add(self.txtctrlLogApp, 1, wx.EXPAND|wx.FIXED_MINSIZE, 0)
-        self.windowMainDown.SetSizer(sizer_2)
-        self.splitterMain.SplitHorizontally(self.windowMainUp, self.windowMainDown)
-        sizer_1.Add(self.splitterMain, 1, wx.EXPAND, 0)
+        self.windowDown.SetSizer(sizer_2)
+        
+        self.splitter.SplitHorizontally(self.windowUp, self.windowDown)
+        sizer_1.Add(self.splitter, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_1)
         sizer_1.Fit(self)
+        
         self.Layout()
      
 
