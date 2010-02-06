@@ -7,7 +7,7 @@
 ###########################################################
 
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.1 $"
 __author__ = "$Author: octopy $"
 
 
@@ -24,15 +24,12 @@ rootLogger.addHandler(socketHandler)
 
 
 
-logger = logging.getLogger("client_02")
+logger = [ logging.getLogger("client_%s" % i) for i in range(16)]
 
-logger.info("client_02 log info at each 100 ms")
 
-for t in range(10*3600):
-    logger.debug("client_02 says > debug at %09ds" %t*100)
-    logger.info("client_02says > info at %09ds" %t*100)
-    logger.warning("client_02 says > warning at %09ds" %t*100)
-    logger.error("client_02 says > error at %09ds" %t*100)
-    time.sleep(0.1)
+for i in range (10):
+    for l in logger:
+        l.info("%i" % i)
+
 
 

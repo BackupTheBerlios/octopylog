@@ -5,6 +5,7 @@ rm -R -v octopylog/*.*
 
 
 echo "create directory"
+mkdir octopylog
 mkdir octopylog/images
 mkdir octopylog/network
 mkdir octopylog/wxcustom
